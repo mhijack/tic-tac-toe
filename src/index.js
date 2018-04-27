@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+
+import Board from './components/Board';
+
 import './index.css';
 
 // ================== TODO ==================
@@ -12,56 +15,9 @@ import './index.css';
 // ! Add a toggle button that lets you sort the moves in either ascending or descending order.
 // ! When someone wins, highlight the three squares that caused the win.
 // ! When no one wins, display a message about the result being a draw.
+// allow user to pick to be  X or O
 
 // ================== Components ==================
-// Square component
-const Square = props => {
-	return (
-		<button className="square" onClick={props.onClick} style={props.style}>
-			{props.square}
-		</button>
-	);
-};
-
-// Board component holding 9 squares
-class Board extends Component {
-	renderSquare = i => {
-		// determine winner or not: if so, pass in style object
-		const winner = this.props.winner;
-		let winningPos = winner ? winner.winningPos : [];
-
-		return (
-			<Square
-				key={i}
-				square={this.props.squares[i]}
-				onClick={() => this.props.onClick(i)}
-				style={winningPos.indexOf(i) !== -1 ? { color: 'red' } : undefined}
-			/>
-		);
-	};
-
-	render() {
-		let rows = [];
-		let cells = [];
-		let cellNum = 0;
-
-		for (let row = 0; row < 3; row += 1) {
-			for (let cell = 0; cell < 3; cell += 1) {
-				cells.push(this.renderSquare(cellNum));
-				cellNum += 1;
-			}
-			rows.push(
-				<div className="board-row" key={row}>
-					{cells}
-				</div>
-			);
-			cells = [];
-		}
-
-		return <div>{rows}</div>;
-	}
-}
-
 // Game component
 class Game extends Component {
 	constructor(props) {
@@ -76,7 +32,7 @@ class Game extends Component {
 			],
 			stepNumber: 0,
 			xIsNext: true,
-			ascending: true
+			ascending: true,
 		};
 	}
 
@@ -115,6 +71,22 @@ class Game extends Component {
 		this.setState({ ascending: !ascending });
 	};
 
+	// restart game
+	handleReset = () => {
+		this.setState({
+			history: [
+				{
+					squares: Array(9).fill(null),
+					// remember which position is placed
+					position: null
+				}
+			],
+			stepNumber: 0,
+			xIsNext: true,
+			ascending: true,
+		});
+	};
+
 	render() {
 		// get all history
 		const history = this.state.history;
@@ -146,19 +118,19 @@ class Game extends Component {
 
 		// check winner
 		const winner = calculateWinner(current.squares);
-		let status;
-		if (winner) {
+    let status;
+    let isDraw = !winner && this.state.stepNumber === 9;
+    let showResetBtn = isDraw || winner;
+		// if draw
+		if (isDraw) {
+      // use this.state.stepNumber to check for draw
+			status = "It's a tie!";
+		} else if (winner) {
 			status = 'Winner: ' + winner.winner;
 			console.log(winner.winningPos);
 		} else {
 			status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
 		}
-
-    // use this.state.stepNumber to check for draw
-    const stepNumber = this.state.stepNumber;
-    if (stepNumber === 9) {
-      status = 'It\' a tie!';
-    }
 
 		return (
 			<div className="game">
@@ -173,6 +145,7 @@ class Game extends Component {
 					<div>{status}</div>
 					<button onClick={this.handleSort}>Sort</button>
 					{this.state.ascending ? <ol>{moves}</ol> : <ol>{moves.reverse()}</ol>}
+					{showResetBtn ? <button onClick={this.handleReset}>Restart</button> : undefined}
 				</div>
 			</div>
 		);
