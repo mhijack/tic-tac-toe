@@ -2,6 +2,8 @@
 
   A tic-tac-toe game built with React.
 
+  A working demo of the game is available via [codepen](https://codepen.io/mhijack/full/gzLYRa/).
+
 # Features
 
   1. Display the location for each move in the format (col, row) in the move history list.
