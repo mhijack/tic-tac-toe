@@ -2,7 +2,7 @@
 
   A tic-tac-toe game built with React.
 
-# TODOs
+# Features
 
   1. Display the location for each move in the format (col, row) in the move history list.
   2. Bold the currently selected item in the move list.
@@ -10,3 +10,8 @@
   4. Add a toggle button that lets you sort the moves in either ascending or descending order.
   5. When someone wins, highlight the three squares that caused the win.
   6. When no one wins, display a message about the result being a draw.
+
+# TODOs
+
+  1. play against computer
+  2. let user pick to be X or O
