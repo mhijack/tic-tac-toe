@@ -16,6 +16,7 @@ import './index.css';
 // ! When someone wins, highlight the three squares that caused the win.
 // ! When no one wins, display a message about the result being a draw.
 // allow user to pick to be  X or O
+// allow play against computer
 
 // ================== Components ==================
 // Game component
@@ -33,6 +34,7 @@ class Game extends Component {
 			stepNumber: 0,
 			xIsNext: true,
 			ascending: true,
+			playerPicked: false
 		};
 	}
 
@@ -53,7 +55,8 @@ class Game extends Component {
 		this.setState({
 			history: history.concat([{ squares, position: formatPosition(i) }]),
 			stepNumber: history.length,
-			xIsNext: !this.state.xIsNext
+			xIsNext: !this.state.xIsNext,
+			playerPicked: true
 		});
 	};
 
@@ -71,7 +74,7 @@ class Game extends Component {
 		this.setState({ ascending: !ascending });
 	};
 
-	// restart game
+	// restart game: resets all states to initial state
 	handleReset = () => {
 		this.setState({
 			history: [
@@ -83,7 +86,16 @@ class Game extends Component {
 			],
 			stepNumber: 0,
 			xIsNext: true,
-			ascending: true,
+      ascending: true,
+      playerPicked: false
+		});
+	};
+
+	// select to be X or O
+	handlePlayerSelect = pickedX => {
+		this.setState({
+			xIsNext: pickedX,
+			playerPicked: true
 		});
 	};
 
@@ -118,12 +130,12 @@ class Game extends Component {
 
 		// check winner
 		const winner = calculateWinner(current.squares);
-    let status;
-    let isDraw = !winner && this.state.stepNumber === 9;
-    let showResetBtn = isDraw || winner;
+		let status;
+		let isDraw = !winner && this.state.stepNumber === 9;
+		let showResetBtn = isDraw || winner;
 		// if draw
 		if (isDraw) {
-      // use this.state.stepNumber to check for draw
+			// use this.state.stepNumber to check for draw
 			status = "It's a tie!";
 		} else if (winner) {
 			status = 'Winner: ' + winner.winner;
@@ -143,7 +155,23 @@ class Game extends Component {
 				</div>
 				<div className="game-info">
 					<div>{status}</div>
-					<button onClick={this.handleSort}>Sort</button>
+					<button
+						style={this.state.playerPicked ? { display: 'none' } : undefined}
+						onClick={() => this.handlePlayerSelect(true)}
+					>
+						Be X
+					</button>
+					<button
+						style={this.state.playerPicked ? { display: 'none' } : undefined}
+						onClick={() => this.handlePlayerSelect(false)}
+					>
+						Be O
+					</button>
+          <br />
+					<button onClick={this.handleSort}>
+						{this.state.ascending ? 'Ascending Order' : 'Descending Order'}
+					</button>
+
 					{this.state.ascending ? <ol>{moves}</ol> : <ol>{moves.reverse()}</ol>}
 					{showResetBtn ? <button onClick={this.handleReset}>Restart</button> : undefined}
 				</div>
