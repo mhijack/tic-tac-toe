@@ -26,13 +26,15 @@ class Game extends React.Component {
 				{
 					squares: Array(9).fill(null),
 					// remember which position is placed
-					position: null
+					position: null,
+					historyStepNumber: 0
 				}
 			],
 			stepNumber: 0,
 			xIsNext: true,
 			ascending: true,
-			playerPicked: false
+			playerPicked: false,
+			xFirst: true
 		};
 	}
 
@@ -51,7 +53,9 @@ class Game extends React.Component {
 		// sets display of corresponding square
 		squares[i] = this.state.xIsNext ? 'X' : 'O';
 		this.setState({
-			history: history.concat([{ squares, position: helpers.formatPosition(i) }]),
+			history: history.concat([
+				{ squares, position: helpers.formatPosition(i), historyStepNumber: history.length }
+			]),
 			stepNumber: history.length,
 			xIsNext: !this.state.xIsNext,
 			playerPicked: true
@@ -62,7 +66,9 @@ class Game extends React.Component {
 	jumpTo = step => {
 		this.setState({
 			stepNumber: step,
-			xIsNext: step % 2 === 0
+			xIsNext: this.state.xFirst
+				? this.state.history[step].historyStepNumber % 2 === 0 ? true : false
+				: this.state.history[step].historyStepNumber % 2 === 0 ? false : true
 		});
 	};
 
@@ -79,13 +85,15 @@ class Game extends React.Component {
 				{
 					squares: Array(9).fill(null),
 					// remember which position is placed
-					position: null
+					position: null,
+					historyStepNumber: 0
 				}
 			],
 			stepNumber: 0,
 			xIsNext: true,
-      ascending: true,
-      playerPicked: false
+			ascending: true,
+			playerPicked: false,
+			xFirst: true
 		});
 	};
 
@@ -93,7 +101,8 @@ class Game extends React.Component {
 	handlePlayerSelect = pickedX => {
 		this.setState({
 			xIsNext: pickedX,
-			playerPicked: true
+			playerPicked: true,
+			xFirst: pickedX
 		});
 	};
 
@@ -107,21 +116,21 @@ class Game extends React.Component {
 		const moves = history.map((step, move) => {
 			// apply style conditionally to highlight current entry
 			let style = {
-				color: 'red',
-				fontWeight: 'bold'
+				borderBottom: '2px #e36209 solid'
 			};
 
 			// directs to corresponding move
-			const desc = move ? 'Move # ' + move : 'Game start';
+			const desc = move ? 'Move ' + move : 'Game start';
 			return (
 				<li key={move}>
 					<button
+						className="move"
 						style={move === this.state.stepNumber ? style : undefined}
 						onClick={() => this.jumpTo(move)}
 					>
-						{desc}
+						<span>{desc}</span>
 					</button>
-					{step.position}
+					<span style={{ paddingLeft: '10px' }}>{step.position}</span>
 				</li>
 			);
 		});
@@ -145,33 +154,41 @@ class Game extends React.Component {
 		return (
 			<div className="game">
 				<div className="game-board">
-					<Board
-						squares={current.squares}
-						onClick={i => this.handleClick(i)}
-						winner={winner ? winner : undefined}
-					/>
+					<Board squares={current.squares} onClick={this.handleClick} winner={winner ? winner : undefined} />
 				</div>
 				<div className="game-info">
 					<div>{status}</div>
-					<button
-						style={this.state.playerPicked ? { display: 'none' } : undefined}
-						onClick={() => this.handlePlayerSelect(true)}
-					>
-						Be X
-					</button>
-					<button
-						style={this.state.playerPicked ? { display: 'none' } : undefined}
-						onClick={() => this.handlePlayerSelect(false)}
-					>
-						Be O
-					</button>
-          <br />
-					<button onClick={this.handleSort}>
-						{this.state.ascending ? 'Ascending Order' : 'Descending Order'}
-					</button>
 
-					{this.state.ascending ? <ol>{moves}</ol> : <ol>{moves.reverse()}</ol>}
-					{showResetBtn ? <button onClick={this.handleReset}>Restart</button> : undefined}
+					<div>
+						<button
+							className="player"
+							style={this.state.playerPicked ? { display: 'none' } : undefined}
+							onClick={() => this.handlePlayerSelect(true)}
+						>
+							Be X
+						</button>
+
+						<button
+							className="player"
+							style={this.state.playerPicked ? { display: 'none' } : undefined}
+							onClick={() => this.handlePlayerSelect(false)}
+						>
+							Be O
+						</button>
+						<br />
+						<button onClick={this.handleSort}>
+							{this.state.ascending ? 'Ascending Order' : 'Descending Order'}
+						</button>
+
+						{this.state.ascending ? <ol>{moves}</ol> : <ol>{moves.reverse()}</ol>}
+						{showResetBtn ? (
+							<button className="restartBtn" onClick={this.handleReset}>
+								Restart
+							</button>
+						) : (
+							undefined
+						)}
+					</div>
 				</div>
 			</div>
 		);
@@ -180,4 +197,3 @@ class Game extends React.Component {
 
 // ========================================
 export default Game;
-
