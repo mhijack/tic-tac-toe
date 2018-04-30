@@ -113,6 +113,7 @@ ol li, ul li{
   cursor: pointer;
 }
 
-.player {
-  text-align: center;
+.start {
+  position: relative;
+  left: -21px;
 }
