@@ -2,7 +2,7 @@
 
   A tic-tac-toe game built with React.
 
-  A working demo of the game is available via [jsfiddle](https://jsfiddle.net/mhijack/gyj1d1gx/).
+  A working demo of the game is available via [jsfiddle](https://jsfiddle.net/mhijack/smeh5c6z/).
 
 # Basic Features
 
