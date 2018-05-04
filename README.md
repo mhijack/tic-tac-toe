@@ -1,8 +1,10 @@
-# tic-tac-toe
+# React Tic-Tac-Toe
 
   A tic-tac-toe game built with React.
 
   A working demo of the game is available via [codepen](https://codepen.io/mhijack/full/BxdoZB/).
+
+  ![Tic-Tac-Toe](./pictures/tic-tac-toe-screenshot.png?raw=true "Tic-Tac-Toe")
 
 # Basic Features
 
